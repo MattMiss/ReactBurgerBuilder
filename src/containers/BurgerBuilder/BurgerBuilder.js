@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import Aux from '../../hoc/Auxillary/Aux';
+import Aux from '../../hoc/Auxillary/Auxiliary';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
@@ -94,31 +94,17 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-        
-        this.setState({loading: true});
-
-        const order = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice,
-            customer: {
-                name: 'Matt Miss',
-                address: {
-                    street: '123 Main St',
-                    zipCode: '21345',
-                    country: 'USA'
-                },
-                email: 'test@test.com'
-            },
-            deliveryMethod: 'fastest'
+    
+        const queryParams = [];
+        for (let i in this.state.ingredients){
+            queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]))
         }
-
-        axios.post('/orders.json', order)
-            .then(response => {
-                this.setState({loading: false, purchasing: false});
-            })
-            .catch(error => {
-                this.setState({loading: false, purchasing: false});
-            });
+        queryParams.push('price=' + this.state.totalPrice);
+        const queryString = queryParams.join('&');
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryString
+        });
     }
 
     render() {
